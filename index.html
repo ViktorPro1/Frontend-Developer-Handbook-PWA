@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>Dev Handbook Pro</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DevHandbook">
+
+    <meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body class="light">
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="logo">
+                    <span>&lt;/&gt;</span>
+                    <span>Dev Handbook Pro</span>
+                </div>
+                <button class="theme-btn" onclick="toggleTheme()">
+                    <span id="theme-icon">☀️</span>
+                </button>
+            </div>
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Швидкий пошук (Ctrl+K)" id="search-input"
+                    oninput="handleSearch()">
+            </div>
+        </div>
+        <div class="nav-tabs" id="nav-tabs"></div>
+    </div>
+
+    <div class="content" id="content"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // Реєстрація Service Worker з відносним шляхом
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Крапка перед /sw.js важлива для правильної роботи на хостингах
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('SW registered successfully:', registration.scope);
+
+                        // Перевірка на оновлення контенту
+                        registration.onupdatefound = () => {
+                            const installingWorker = registration.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        console.log('Доступна нова версія! Оновіть сторінку.');
+                                    }
+                                }
+                            };
+                        };
+                    })
+                    .catch((error) => {
+                        console.log('SW registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+
+</html>
